@@ -1,31 +1,18 @@
 # day 03 ---------------------------------------------
-data = readlines(joinpath(@__DIR__, "inputs", "input_03.txt"))
-
-function stringtobitmatrix(data)
-
-   nlin = length(data)
-   ncol = length(data[1])
-
-   bit_matrix = BitArray(undef, nlin, ncol)
-   for i in 1:nlin
-      for j in 1:ncol
-         bit_matrix[i,j] = parse(Bool, data[i][j])
-      end
-   end
-
-   return bit_matrix
+# transform vector of string in matrix of bits
+vecofvec = map(readlines(joinpath(@__DIR__, "inputs", "input_03.txt"))) do line
+    parse.(Bool, split(line, ""))
 end
+data = permutedims(hcat(vecofvec...))
+
 
 # 03a ------------------------------------------------
 function sol_03a(data)
-   
-   # transform vector of string in matrix of bits
-   bit_matrix = stringtobitmatrix(data)
-   
+      
    # get the most repeated bit, for each collumn, as a binary string 
    gamma_rate   = "0b"
    epsilon_rate = "0b"
-   for col in eachcol(bit_matrix)
+   for col in eachcol(data)
       if mean(col) ≥ 0.5
          gamma_rate   *= "1"
          epsilon_rate *= "0"
@@ -47,18 +34,18 @@ sol_03a(data)
 
 # 03b ------------------------------------------------
 
-function filtermatrix(bit_matrix, idx; reverse=false)
+function filtermatrix(data, idx; reverse=false)
    if mean(idx) ≥ 0.5 
       if reverse
-         return bit_matrix[(.!idx), :]
+         return data[(.!idx), :]
       else
-         return bit_matrix[idx, :]
+         return data[idx, :]
       end
    else
       if reverse
-         return bit_matrix[idx, :]
+         return data[idx, :]
       else
-         return bit_matrix[(.!idx), :]
+         return data[(.!idx), :]
       end
    end
 end
@@ -69,13 +56,10 @@ function getdiagnostic(data; order=:mostcommon)
    order == :leastcommon ? (rev = true)  :
    throw(ArgumentError("wrong argument. Use :mostcommon or :leastcommon"))
 
-   # transform vector of string in matrix of bits
-   bit_matrix = stringtobitmatrix(data)
-
-   # # apply the rule
-   idx = bit_matrix[:, 1]
-   dt = filtermatrix(bit_matrix, idx, reverse=rev)
-   for j in 2:size(bit_matrix, 2)
+   # apply the rule
+   idx = data[:, 1]
+   dt = filtermatrix(data, idx, reverse=rev)
+   for j in 2:size(data, 2)
       idx = dt[:, j]
       dt = filtermatrix(dt, idx, reverse=rev)
       size(dt, 1) == 1 && break
