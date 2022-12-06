@@ -26,8 +26,13 @@ function checkbingo(checkboard)
    any(x -> x == 5, h_sum) || any(x -> x == 5, v_sum)
 end
 
-getscore(checkboard, board, draw) = sum(boards[.!checkboard]) * draw
+getscore(checkboard, boards, draw) = sum(boards[.!checkboard]) * draw
 
+function getscore(checkboards, boards, i, nb)
+   unmarked_bits = .!checkboards[:,:,i]
+   unmarked_values = boards[:,:,i][unmarked_bits]
+   sum(unmarked_values) * nb
+end
 
 # 04a ------------------------------------------------
 function sol_04a(boards, draws)

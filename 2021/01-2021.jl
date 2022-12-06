@@ -1,13 +1,11 @@
 # day 01 ---------------------------------------------
-input_path = joinpath(pwd(), "inputs", "input_01.txt")
+input_path = joinpath(@__DIR__, "inputs", "input_01.txt")
 x = parse.(Int, readlines(input_path))
-
 
 # 01a ------------------------------------------------
 sum(x[i] > x[i-1] for i in 2:lastindex(x))
 # or
 sum(diff(x) .> 0)
-
 
 # 01b ------------------------------------------------
 sum(4:lastindex(x)) do i                                                                                  
